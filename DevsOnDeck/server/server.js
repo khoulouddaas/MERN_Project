@@ -1,22 +1,35 @@
-import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import dbConnect from './config/mongoose.config.js';
+// server.js
+require('dotenv').config();
+const express = require('express');
+const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser');
+const cors = require('cors');
+
 const app = express();
-app.use(express.json(), cors());
-dotenv.config();
-const PORT = process.env.PORT;
-dbConnect();
-app.listen(PORT, () =>
-    console.log(`Listening on port: ${PORT}`)
-);
 
+// Middleware setup
+app.use(cors({
+  origin: 'http://localhost:5173',  // your React frontend URL
+  credentials: true,
+}));
+app.use(cookieParser());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
+// Connect to MongoDB and start server only after successful connection
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => {
+    console.log('MongoDB connected successfully');
 
-import bodyParser from "body-parser";
-import bookRoutes from "./routes/bookRoutes.js";
+    // Import your routes here after DB connection is ready
+    require('./routes/developer.routes')(app);
 
-
-
-app.use(bodyParser.json());
-app.use("/api", bookRoutes);
+    // Start Express server
+    app.listen(process.env.PORT || 8000, () => {
+      console.log(`Server listening on port ${process.env.PORT || 8000}`);
+    });
+  })
+  .catch(err => {
+    console.error('MongoDB connection error:', err);
+    process.exit(1); // Exit if DB connection fails
+  });
