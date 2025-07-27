@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom"
 import { useState } from 'react';
 import axios from 'axios';
 
-export const Landing = () => {
+export const Hom = () => {
 
     return (
         <div style={{textAlign:'center', marginBottom:'auto'}}>

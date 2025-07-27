@@ -6,7 +6,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { DevLogin } from './components/DevLogin';
 import { Developer } from './components/Developer';
 import { UpdateDev } from './components/DevForm';
-import { Landing }  from './components/Landing';
+import { Landing }  from './components/Home';
 
 function App() {
   return (

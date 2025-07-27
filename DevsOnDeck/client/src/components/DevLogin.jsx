@@ -38,43 +38,44 @@ export const DevLogin = () => {
 
   return (
     <div style={{ maxWidth: "400px", margin: "auto", padding: "1rem" }}>
-      <h1>Welcome Developers!</h1>
-      <p>
-        See why so many out of bootcamp developers choose us to help them find
-        a new career opportunity! Let's connect you to a job!
-      </p>
+  <h1 style={{ color: "black" }}>Welcome Developers!</h1>
+  <p style={{ color: "black" }}>
+    See why so many out of bootcamp developers choose us to help them find
+    a new career opportunity! Let's connect you to a job!
+  </p>
+
 
       {errorMessage && (
         <p style={{ color: "red", fontWeight: "bold" }}>{errorMessage}</p>
       )}
 
-      <form onSubmit={login}>
-        <div>
-          <label htmlFor="email">Email Address:</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            autoFocus
-            style={{ width: "100%", padding: "0.5rem", marginTop: "0.25rem" }}
-          />
-        </div>
+     <form onSubmit={login}>
+  <div>
+    <label htmlFor="email" style={{ color: "black" }}>Email Address:</label> {/* Added style here */}
+    <input
+      type="email"
+      id="email"
+      name="email"
+      value={email}
+      onChange={(e) => setEmail(e.target.value)}
+      autoFocus
+      style={{ width: "100%", padding: "0.5rem", marginTop: "0.25rem", color: "black" }}
+    />
+  </div>
 
-        <div style={{ marginTop: "1rem" }}>
-          <label htmlFor="password">Password:</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            style={{ width: "100%", padding: "0.5rem", marginTop: "0.25rem" }}
-          />
-        </div>
+  <div style={{ marginTop: "1rem" }}>
+    <label htmlFor="password" style={{ color: "black" }}>Password:</label> {/* Added style here */}
+    <input
+      type="password"
+      id="password"
+      name="password"
+      value={password}
+      onChange={(e) => setPassword(e.target.value)}
+      required
+      style={{ width: "100%", padding: "0.5rem", marginTop: "0.25rem" }}
+    />
+  </div>
+
 
         <button
           type="submit"

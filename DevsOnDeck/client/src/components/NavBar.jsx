@@ -1,28 +1,27 @@
-//import { CompanyLogout } from "./LogOutCompany";
+import { Link } from 'react-router-dom'; 
+import '../App.css'; 
 
 export const NavBar = () => {
     return (
         <nav className="navbar">
             <h1>
                 <span>
-                    <a href="/">DevsOnDeck</a>
+                    <Link to="/">DevsOnDeck</Link> 
                 </span>
             </h1>
-            <h5>
-               
-            </h5>
+            <h5></h5> 
             <div className="links">
                 <h5>
                     <span>
-                        <a href="/devs/register">Register</a>
+                        <Link to="/devs/register">Register</Link>
                     </span>
                 </h5>
                 <h5>
                     <span>
-                        <a href="/devs/login">Sign In</a>
+                        <Link to="/devs/login">Dev Login</Link> 
                     </span>
                     <span>
-                        <a className="navCompany" href="/company/register">Company</a>
+                        <Link className="navCompany" to="/orgs/login">Org Login</Link>
                     </span>
                 </h5>
             </div>
