@@ -3,7 +3,7 @@ const {authenticateDev} = require("../config/jwt.config");
 const SkillController = require('../controllers/skill.controller');
 
 module.exports = (app) => {
-    //app.get("/api/devs/allDevs", DevController.findAllDevs)
+    app.get("/api/devs/allDevs", DevController.findAllDevs)
     app.get("/api/devs/:id", DevController.getOneDev)
     app.post("/api/devs/register", DevController.register)
     app.put("/api/devs/:id", DevController.updateDev)

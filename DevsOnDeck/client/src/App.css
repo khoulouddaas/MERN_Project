@@ -307,3 +307,177 @@ body {
     background-color: #e67e22; /* Orange */
     color: white;
 }
+
+/* --- Developer Dashboard Specific Styles --- */
+.dashboard-container {
+    padding: 20px;
+    text-align: center; /* Center the title */
+    background-color: #f0f2f5; /* Light grey background */
+    min-height: calc(100vh - 70px); /* Fill remaining viewport height */
+    display: flex; /* Use flexbox for vertical centering if needed */
+    flex-direction: column;
+    align-items: center; /* Center horizontally */
+}
+
+.dashboard-title {
+    color: #333;
+    margin-bottom: 30px;
+    font-size: 32px; /* Make title bigger */
+}
+
+.dashboard-table-wrapper {
+    width: 90%; /* Make the wrapper take 90% of the available width */
+    max-width: 1200px; /* Set a maximum width for larger screens */
+    margin: 0 auto; /* Center the wrapper horizontally */
+    background-color: white; /* White background for the table area */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow-x: auto; /* Add horizontal scroll for smaller screens if table overflows */
+}
+
+.black-table {
+    width: 100%; /* Make table fill its wrapper */
+    margin-bottom: 0; /* Remove default Bootstrap table bottom margin if any */
+    color: black; /* Set text color to black for the entire table */
+    border-collapse: collapse; /* Ensure borders collapse nicely */
+}
+
+/* Table header and cell styles */
+.black-table th,
+.black-table td {
+    border: 1px solid #ddd; /* Light grey borders */
+    padding: 12px 15px; /* More padding for better spacing */
+    text-align: left;
+    vertical-align: middle; /* Align content in middle */
+    font-size: 16px; /* Slightly larger font for readability */
+}
+
+.black-table thead th {
+    background-color: #e67e22; /* Orange background for headers */
+    color: white; /* White text for headers */
+    font-weight: bold;
+    text-transform: uppercase; /* Uppercase header text */
+}
+
+/* Zebra striping for rows */
+.black-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9; /* Lighter background for even rows */
+}
+
+.black-table tbody tr:hover {
+    background-color: #f1f1f1; /* Subtle hover effect */
+}
+
+/* Button styles within the table */
+.black-table .btn {
+    padding: 6px 12px; /* Adjust button padding for table cells */
+    font-size: 14px; /* Adjust button font size */
+    margin-right: 5px; /* Space between buttons */
+    border-radius: 4px; /* Rounded corners for buttons */
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.black-table .btn-warning {
+    background-color: #f0ad4e; /* Bootstrap warning color */
+    border-color: #eea236;
+    color: white; /* Ensure text is white */
+}
+.black-table .btn-warning:hover {
+    background-color: #ec971f;
+    border-color: #d58512;
+    transform: translateY(-1px);
+}
+
+.black-table .btn-danger {
+    background-color: #d9534f; /* Bootstrap danger color */
+    border-color: #d43f3a;
+    color: white; /* Ensure text is white */
+}
+.black-table .btn-danger:hover {
+    background-color: #c9302c;
+    border-color: #ac2925;
+    transform: translateY(-1px);
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+    .dashboard-table-wrapper {
+        width: 95%; /* Wider on smaller screens */
+        padding: 15px;
+    }
+
+    .black-table th,
+    .black-table td {
+        padding: 8px 10px; /* Reduce padding on smaller screens */
+        font-size: 14px;
+    }
+
+    .black-table .btn {
+        padding: 4px 8px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard-title {
+        font-size: 26px;
+    }
+}
+
+.home-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 80vh;
+  text-align: center;
+  background: #f4f6f8;
+  padding: 60px;
+}
+
+.home-title {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #222;
+}
+
+.home-subtitle {
+  font-size: 1.25rem;
+  color: #555;
+  max-width: 600px;
+  margin-bottom: 30px;
+  line-height: 1.5;
+}
+
+.home-buttons {
+  display: flex;
+  gap: 15px;
+}
+
+.btn {
+  padding: 12px 20px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  color: #fff;
+}
+
+.btn-developer {
+  background-color: #007bff;
+}
+
+.btn-developer:hover {
+  background-color: #0056b3;
+}
+
+.btn-company {
+  background-color: #333;
+}
+
+.btn-company:hover {
+  background-color: #555;
+}

@@ -128,7 +128,7 @@ module.exports = {
     deleteDev: (req, res) => {
         Developer.deleteOne({_id: req.params.id})
             .then((deletedDev)=> {
-                console.log('Found a job!');
+                console.log('Deleted with success!');
                 res.json(deletedDev)
             })
             .catch((err)=> {

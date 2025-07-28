@@ -1,13 +1,33 @@
-import { useNavigate } from "react-router-dom"
-import { useState } from 'react';
-import axios from 'axios';
+import { useNavigate } from "react-router-dom";
+import "../App.css";
 
 export const Home = () => {
+    const navigate = useNavigate();
 
     return (
-        <div style={{textAlign:'center', marginBottom:'auto'}}>
-            <h1 >Developers find your new position here!</h1>
-            <p>Looking for new applicants? Companies sign up today!</p>
+        <div className="home-container">
+            <h1 className="home-title">Welcome to DevsOn Deck!</h1>
+            <p className="home-subtitle">
+                Developers: Land your next dream job. <br />
+                Companies: Discover top talent ready to work.
+            </p>
+
+            <div className="home-buttons">
+                <button
+                    className="btn btn-developer"
+                    onClick={() => navigate('/devs/register')}
+                >
+                    Join as Developer
+                </button>
+                <button
+                    className="btn btn-company"
+                    onClick={() => navigate('/companies/register')}
+                >
+                    Register as Company
+                </button>
+            </div>
         </div>
     );
-} 
+};
+
+export default Home;
