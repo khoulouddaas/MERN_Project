@@ -1,12 +1,12 @@
 import { NavBar } from './components/NavBar';
-import AllDevs from './components/AllDevs';
 import DevRegistration from './components/DevRegister';
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { DevLogin } from './components/DevLogin';
-import { Developer } from './components/Developer';
-import { UpdateDev } from './components/DevForm';
-import { Landing }  from './components/Home';
+
+import { Home }  from './components/Home';
+import Languages from './components/Languages';
+
 
 function App() {
   return (
@@ -17,8 +17,10 @@ function App() {
         <Routes>
          
           <Route element={<DevRegistration/>} path="/devs/register" />
-              <Route element={<Landing/>} path="/" default />
+              <Route element={<Home/>} path="/" default />
           <Route element={<DevLogin/>} path="/devs/login" />
+<Route path="/devs/skills/languages/:devId" element={<Languages />} />
+
 
         </Routes>
       </div>

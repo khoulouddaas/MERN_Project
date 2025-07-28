@@ -44,7 +44,7 @@ const DevRegistration = () => {
                 });
                 setConfirmReg("Thanks for registering with us! Log in now!");
                 setErrors({});
-                nav('/devs/login'); 
+                nav('/devs/skills/languages/:devId'); 
             })
             .catch((err) => {
                 if (err.response && err.response.data && err.response.data.errors) {

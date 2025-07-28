@@ -194,7 +194,116 @@ body {
     text-decoration: underline;
 }
 
-/* Specific styling for Dev/Org Login if needed (from previous screenshot) */
-/* The general .links a already covers this, but if you want separate styling for these,
-   you might add specific classes to them in JSX and style here.
-   For now, the general 'a' styling within .links will apply. */
+/* App.css */
+
+/* Styles for the "Pick Your Top 5 Languages" heading */
+.languages-heading {
+    color: black;
+    /* You might want to add other styles like font-weight, font-size, margin etc. */
+    margin-bottom: 20px; /* Example spacing */
+}
+
+/* Styles for the "Short Bio" heading */
+.bio-heading {
+    color: black;
+    /* You might want to add other styles like font-weight, font-size, margin etc. */
+    margin-bottom: 10px; /* Example spacing */
+}
+
+/* Ensure the textarea itself has black text if it's not already */
+.bio-textarea {
+    color: black;
+    /* Add border, padding, etc. if not already defined by Bootstrap or other styles */
+}
+
+/* If your ColStyle is affecting the text color, you might need to override it */
+.ColStyle h3, .ColStyle h4 {
+    color: black;
+}
+
+/* Additional styles for the overall layout if needed */
+.contStyle {
+    background-color: white; /* Example: Ensure container background is white if it's not */
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    max-width: 900px; /* Adjust max-width as needed for the overall container */
+    margin: 20px auto; /* Center the container with some margin */
+}
+
+.iconcontainer {
+    display: flex;
+    justify-content: center; /* Center the table of icons */
+    margin-top: 20px;
+}
+
+.iconStyle {
+    width: 80px; /* Adjust icon size */
+    height: 80px;
+    object-fit: contain;
+    margin: 10px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    transition: all 0.2s ease-in-out;
+}
+
+.iconStyle:hover {
+    border-color: #e67e22; /* Orange border on hover */
+    transform: scale(1.05);
+}
+
+.iconStyle2 { /* Styles for selected languages at the top */
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    margin: 5px;
+    border: 2px solid #e67e22; /* Orange border for selected icons */
+    border-radius: 8px;
+}
+
+.langContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    min-height: 70px; /* Give some space for selected languages */
+    border: 1px dashed #ccc;
+    padding: 10px;
+    border-radius: 8px;
+    align-items: center;
+}
+
+.btncont {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.btncont button {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btncont button:hover {
+    opacity: 0.9;
+}
+
+.skipbtn {
+    background-color: #f0f0f0;
+    color: #333;
+    border: 1px solid #ccc;
+}
+
+.skipbtn:hover {
+    background-color: #e0e0e0;
+}
+
+.btncont button:not(.skipbtn) { /* Style for the "NEXT STEP" button */
+    background-color: #e67e22; /* Orange */
+    color: white;
+}

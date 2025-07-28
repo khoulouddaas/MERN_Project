@@ -1,0 +1,147 @@
+import React, { useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from "react-router-dom";
+import Form from 'react-bootstrap/Form';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+// import SubHeader from './SubHeader'; // Assuming SubHeader is handled by NavBar now
+import '../App.css'; // Make sure this path is correct
+
+// Import your icons (ensure these paths are correct relative to this component)
+import cssIcon from './icons/css.png';
+import csharpIcon from './icons/csharp.jpg';
+import goIcon from './icons/go.jpg';
+import htmlIcon from './icons/html.jpg';
+import javaIcon from './icons/java.png';
+import jsIcon from './icons/js.png';
+import pythonIcon from './icons/pyth.jpg';
+import rubyIcon from './icons/ruby.jpg';
+import sqlIcon from './icons/sql.png';
+import swiftIcon from './icons/swift.png';
+import phpIcon from './icons/php.png';
+import cppIcon from './icons/c++.png';
+
+const Languages = (props) => {
+  const [languages, setLanguages] = useState([]);
+  const [bio, setBio] = useState("");
+  const [langImages, setLangImages] = useState([]);
+  const [count, setCount] = useState(0);
+  // const [now, setNow] = useState(0); // 'now' state seems unused
+  const [errors, setErrors] = useState([]);
+  const navigate = useNavigate();
+
+  const AddSkills = (e) => {
+    e.preventDefault();
+    axios.post('http://localhost:8000/api/skills/languages', {
+      devId: props.devId, // Ensure devId is passed correctly, perhaps from context or a route param
+      languages: languages,
+      bio: bio
+    })
+      .then(res => {
+        console.log(res.data);
+        navigate('/devs/dashboard'); // Redirect to a relevant page after saving skills
+      })
+      .catch(err => {
+        const errorResponse = err.response.data.errors;
+        const errorArr = [];
+        if (errorResponse) {
+          for (const key of Object.keys(errorResponse)) {
+            errorArr.push(errorResponse[key].message);
+          }
+        } else {
+          errorArr.push("An unexpected error occurred. Please try again.");
+        }
+        setErrors(errorArr);
+      });
+  };
+
+  const AddLang = (img, lang) => {
+    if (count < 5 && !languages.includes(lang)) {
+      setLanguages([...languages, lang]);
+      setLangImages([...langImages, img]);
+      // setNow((count + 1) * 20); // Update if you're using a progress bar
+      setCount(count + 1);
+    }
+  };
+
+  return (
+    // Removed the outer <div> and <Card> as they might interfere with Bootstrap Container
+    // and are not strictly necessary if Container handles the main layout.
+    // If you need the Card, ensure it wraps the Container and has appropriate styling.
+    <Container className='contStyle'>
+      <Row>
+        <Col className='ColStyle'>
+          {/* Applied the new CSS class for the heading */}
+          <h3 className='languages-heading'>Pick Your Top 5 Languages</h3>
+        </Col>
+        <Col className='ColStyle'>
+          <div className='langContainer'>
+            {langImages.map((img, index) => (
+              <img key={index} src={img} alt={`lang-${index}`} className='iconStyle2' />
+            ))}
+          </div>
+        </Col>
+      </Row>
+      <Row>
+        <Col className='ColStyle'>
+          <div className='iconcontainer'>
+            <table>
+              <tbody>
+                <tr>
+                  <td><img src={csharpIcon} alt="csharp" className='iconStyle' onClick={() => AddLang(csharpIcon, "csharp")} /></td>
+                  <td><img src={cssIcon} alt="css" className='iconStyle' onClick={() => AddLang(cssIcon, "css")} /></td>
+                  <td><img src={goIcon} alt="go" className='iconStyle' onClick={() => AddLang(goIcon, "go")} /></td>
+                  <td><img src={htmlIcon} alt="html" className='iconStyle' onClick={() => AddLang(htmlIcon, "html")} /></td>
+                </tr>
+                <tr>
+                  <td><img src={javaIcon} alt="java" className='iconStyle' onClick={() => AddLang(javaIcon, "java")} /></td>
+                  <td><img src={jsIcon} alt="js" className='iconStyle' onClick={() => AddLang(jsIcon, "js")} /></td>
+                  <td><img src={pythonIcon} alt="python" className='iconStyle' onClick={() => AddLang(pythonIcon, "python")} /></td>
+                  <td><img src={rubyIcon} alt="ruby" className='iconStyle' onClick={() => AddLang(rubyIcon, "ruby")} /></td>
+                </tr>
+                <tr>
+                  <td><img src={sqlIcon} alt="sql" className='iconStyle' onClick={() => AddLang(sqlIcon, "sql")} /></td>
+                  <td><img src={swiftIcon} alt="swift" className='iconStyle' onClick={() => AddLang(swiftIcon, "swift")} /></td>
+                  <td><img src={phpIcon} alt="php" className='iconStyle' onClick={() => AddLang(phpIcon, "php")} /></td>
+                  <td><img src={cppIcon} alt="c++" className='iconStyle' onClick={() => AddLang(cppIcon, "c++")} /></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </Col>
+        <Col>
+          <Row>
+            {/* Applied the new CSS class for the heading */}
+            <h4 className='bio-heading'>Short Bio</h4>
+          </Row>
+          <Row>
+            <Form.Control
+              as="textarea"
+              rows={8}
+              className='bio-textarea' // Applied new class for textarea
+              style={{ width: '400px' }} // Keep inline style for width if specific
+              onChange={(e) => setBio(e.target.value)}
+              value={bio} // Make sure to bind value for controlled component
+            />
+          </Row>
+        </Col>
+      </Row>
+      <div className='btncont'>
+        <button className='skipbtn' onClick={() => navigate("/devs/login")}>Skip This Step</button>
+        <button onClick={AddSkills}>Finished?
+        </button>
+      </div>
+
+      {errors.length > 0 && (
+        <div className="error-messages" style={{ color: 'red', marginTop: '20px', textAlign: 'center' }}>
+          {errors.map((err, index) => (
+            <p key={index}>{err}</p>
+          ))}
+        </div>
+      )}
+    </Container>
+  );
+};
+
+export default Languages;
