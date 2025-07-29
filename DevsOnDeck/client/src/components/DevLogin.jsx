@@ -37,7 +37,7 @@ export const DevLogin = () => {
   };
 
   return (
-    <div style={{ maxWidth: "400px", margin: "auto", padding: "1rem" }}>
+    <div style={{ maxWidth: "400px", margin: "auto", padding: "2rem" }}>
   <h1 style={{ color: "black" }}>Welcome Developers!</h1>
   <p style={{ color: "black" }}>
     See why so many out of bootcamp developers choose us to help them find
@@ -93,10 +93,10 @@ export const DevLogin = () => {
         </button>
       </form>
 
-      <p style={{ marginTop: "1rem" }}>
-        Don't have an account?{" "}
-        <a href="/devs/register" style={{ color: "blue" }}>
-          Register Here!
+      <p>
+       
+        <a href="/devs/register" style={{ color: "Orange" }}>
+           Don't have an account? Register Here!
         </a>
       </p>
     </div>

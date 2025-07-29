@@ -6,6 +6,7 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import '../App.css';
+import { useParams } from 'react-router-dom';
 
 // Icons
 import cssIcon from './icons/css.png';
@@ -27,12 +28,13 @@ const Languages = (props) => {
   const [langImages, setLangImages] = useState([]);
   const [count, setCount] = useState(0);
   const [errors, setErrors] = useState([]);
+  const { devId } = useParams();
+
   const navigate = useNavigate();
 
   const AddSkills = (e) => {
     e.preventDefault();
-    axios.post('http://localhost:8000/api/skills/languages', {
-      devId: props.devId,
+axios.post(`http://localhost:8000/api/skills/languages/${devId}`, {
       languages,
       bio
     })

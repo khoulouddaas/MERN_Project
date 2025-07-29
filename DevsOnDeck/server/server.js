@@ -21,6 +21,9 @@ mongoose.connect(process.env.MONGODB_URI)
     console.log('MongoDB connected successfully');
 
     require('./routes/developer.routes')(app);
+    require('./routes/org.routes')(app);
+
+
 
     app.listen(process.env.PORT || 8000, () => {
       console.log(`Server listening on port ${process.env.PORT || 8000}`);

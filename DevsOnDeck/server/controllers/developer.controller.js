@@ -135,6 +135,51 @@ module.exports = {
                 console.log('Deleted dev failed!');
                 res.json({message: "couldn't delete dev!", error: err});
             })
+    },
+
+getAllDevelopersWithSkills: (req, res) => {
+  Developer.aggregate([
+    {
+      $lookup: {
+        from: 'skills',
+        localField: '_id',
+        foreignField: 'devId',
+        as: 'developerskills',
+      },
+    },
+    {
+      $addFields: {
+        firstSkill: { $arrayElemAt: ['$developerskills', 0] }
+      }
+    },
+    {
+      $project: {
+        _id: 1,
+        firstName: 1,
+        lastName: 1,
+        bio: '$firstSkill.bio',
+        languages: {
+          $cond: [
+            { $gt: [{ $size: '$developerskills' }, 0] },
+            {
+              $reduce: {
+                input: '$developerskills.languages',
+                initialValue: [],
+                in: { $setUnion: ['$$value', '$$this'] }
+              }
+            },
+            []  // empty array if no skills
+          ]
+        }
+      }
     }
+  ])
+    .then(data => res.json(data))
+    .catch(err => {
+      console.error('Aggregation error:', err);
+      res.status(500).json({ error: 'Something went wrong' });
+    });
+}
+
 
 }

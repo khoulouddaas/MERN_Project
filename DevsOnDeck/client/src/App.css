@@ -147,20 +147,36 @@ body {
 
 
 /* NavBar.css */
+/* App.css (or NavBar.css) */
+/* In index.css or your most global CSS file */
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%; /* Ensure html and body also take full width */
+    height: 100%; /* Important for full height layouts */
+}
+
+#root { /* If your React app mounts to a div with id="root" */
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* Rest of your CSS, including NavBar.css or App.css for .navbar */
 
 .navbar {
-    background-color: #e67e22; /* Orange-ish header */
+    background-color: #e67e22;
     color: white;
-    padding: 15px 585px;
+    padding: 15px 20px; /* Use a reasonable padding */
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 100%; /* Ensure navbar spans full width */
-    box-sizing: border-box; /* Include padding in width calculation */
+    width: 100%; /* This should now correctly apply to the full viewport width */
+    box-sizing: border-box;
 }
-
 .navbar h1 {
-    margin: 0; /* Remove default h1 margin */
+    margin: 0;
     font-size: 24px;
     font-weight: bold;
 }
@@ -173,16 +189,21 @@ body {
 .navbar .links {
     display: flex;
     align-items: center;
-    gap: 20px; /* Space between the link groups */
+    /* Use gap to space out the main groups of links (e.g., Register vs Login) */
+    gap: 30px; /* Adjust this value to control space between different link sections */
 }
 
+/* This targets the <h5> elements directly within .navbar .links */
 .navbar .links h5 {
     margin: 0; /* Remove default h5 margin */
+    display: flex; /* Make h5 a flex container to manage its internal spans */
+    align-items: center;
+    /* Use gap here to space out links *within* the same h5 group if they are spans */
+    gap: 25px; /* Adjust this value for space between "Dev Login" and "Org Login" */
 }
 
-.navbar .links span {
-    margin-left: 20px; /* Space between individual links */
-}
+
+
 
 .navbar .links a {
     color: white;
@@ -194,6 +215,44 @@ body {
     text-decoration: underline;
 }
 
+/* Responsive adjustments if needed for very small screens */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 15px; /* Smaller padding on smaller screens */
+    }
+    .navbar .links {
+        gap: 15px; /* Reduce gap on smaller screens */
+    }
+    .navbar .links h5 {
+        gap: 15px; /* Reduce gap between internal links */
+    }
+    .navbar h1 {
+        font-size: 20px;
+    }
+    .navbar .links a {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 800px) {
+    .navbar {
+        flex-direction: column; /* Stack items vertically on very small screens */
+        align-items: flex-start; /* Align stacked items to the left */
+        padding-bottom: 10px;
+    }
+    .navbar h1 {
+        margin-bottom: 10px;
+    }
+    .navbar .links {
+        flex-direction: column; /* Stack links if there are multiple main groups */
+        align-items: flex-start;
+        gap: 5px; /* Smaller gap when stacked */
+    }
+    .navbar .links h5 {
+        flex-direction: row; /* Keep internal links horizontal, if space allows */
+        gap: 10px;
+    }
+}
 /* App.css */
 
 /* Styles for the "Pick Your Top 5 Languages" heading */

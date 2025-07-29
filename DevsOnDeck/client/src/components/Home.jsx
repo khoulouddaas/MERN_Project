@@ -21,7 +21,7 @@ export const Home = () => {
                 </button>
                 <button
                     className="btn btn-company"
-                    onClick={() => navigate('/companies/register')}
+                    onClick={() => navigate('/org/register')}
                 >
                     Register as Company
                 </button>

@@ -1,17 +1,41 @@
-const jwt = require("jsonwebtoken");
+const jtw = require('jsonwebtoken')
 
-module.exports.authenticateDev = (req, res, next) => {
-    try {
-        const token = req.cookies.devtoken;
-        if (!token) {
-            return res.status(401).json({ message: "No token found" });
-        }
+module.exports = {
 
-        const payload = jwt.verify(token, process.env.JWT_SECRET);
-        req.jwtpayload = payload;
-        next();
-    } catch (err) {
-        console.log("JWT verification failed:", err);
-        return res.status(401).json({ message: "Invalid token" });
-    }
-};
+    authenticateDev: (req, res, next)=>{
+        jtw.verify(req.cookies.devtoken,
+            `${process.env.JWT_SECRET}`,
+            (err, payload)=> {
+                if(err){
+                    console.log("Woops-------Is there a cookie?")
+                    console.log(err);
+                    res.status(401).json({verified: false})
+                }
+                else{
+                    console.log(payload);
+                    req.jwtpayload = payload
+                    next()
+                }
+            }
+            )
+    },
+    
+    authenticateCompany: (req, res, next)=>{
+        jtw.verify(req.cookies.companytoken,
+            `${process.env.JWT_SECRET}`,
+            (err, payload)=> {
+                if(err){
+                    console.log("Woops-------Is there a cookie?")
+                    console.log(err);
+                    res.status(401).json({verified: false})
+                }
+                else{
+                    console.log("This is the payload:", payload);
+                    req.jwtpayload = payload
+                    next()
+                }
+            }
+            )
+    },
+
+}
