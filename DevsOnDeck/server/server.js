@@ -22,6 +22,8 @@ mongoose.connect(process.env.MONGODB_URI)
 
     require('./routes/developer.routes')(app);
     require('./routes/org.routes')(app);
+        require('./routes/position.routes')(app);
+
 
 
 

@@ -12,7 +12,7 @@ import DevDashboard from './components/DevDashboard';
 import DevEdit from './components/UpdateDev';
 import OrgRegistration from './components/OrgRegister';
 import DevList from './components/DevList';
-
+import Newposition from './components/NewPosition';
 
 
 function App() {
@@ -35,6 +35,7 @@ function App() {
 
 <Route path="/devs/update/:id" element={<DevEdit />} />
           <Route element={<DevList/>} path="/org/dashboard" />
+          <Route element={<Newposition/>} path="/jobs/create" />
 
         </Routes>
       </div>
