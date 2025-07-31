@@ -73,7 +73,7 @@ const DevEdit = () => {
 
     axios.put(`http://localhost:8000/api/devs/${id}`, dev)
       .then(res => {
-        navigate('/devs/AllDevs');
+        navigate('/devs/profile');
       })
       .catch(err => {
         if (err.response?.data?.errors) {

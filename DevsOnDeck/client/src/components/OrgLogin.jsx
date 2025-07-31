@@ -1,100 +1,219 @@
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import axios from "axios";
+import React, { useState } from 'react';
+import axios from 'axios';
+import { useNavigate, Link } from 'react-router-dom';
+import {
+    Container,
+    Box,
+    Typography,
+    TextField,
+    Button,
+    Stack // Used for layout like form-row
+} from '@mui/material';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { styled } from '@mui/system';
+
+// Custom theme for the sketchy look - copied from DevRegistration
+const sketchTheme = createTheme({
+    typography: {
+        fontFamily: '"Permanent Marker", cursive', // Use a sketchy font
+    },
+    components: {
+        MuiTextField: {
+            styleOverrides: {
+                root: {
+                    '& .MuiOutlinedInput-root': {
+                        '& fieldset': {
+                            borderColor: 'black', // Default border
+                            borderWidth: '2px',
+                            borderRadius: '8px',
+                        },
+                        '&:hover fieldset': {
+                            borderColor: 'black', // Hover border
+                        },
+                        '&.Mui-focused fieldset': {
+                            borderColor: 'black', // Focused border
+                        },
+                        backgroundColor: 'white',
+                    },
+                    '& .MuiInputLabel-root': {
+                        fontFamily: '"Permanent Marker", cursive',
+                        color: 'black',
+                    },
+                    '& .MuiInputBase-input': {
+                        fontFamily: '"Permanent Marker", cursive',
+                        color: 'black',
+                    },
+                },
+            },
+        },
+        MuiSelect: { // Included for consistency, though not used in login
+            styleOverrides: {
+                root: {
+                    '& .MuiOutlinedInput-notchedOutline': {
+                        borderColor: 'black',
+                        borderWidth: '2px',
+                        borderRadius: '8px',
+                    },
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                        borderColor: 'black',
+                    },
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                        borderColor: 'black',
+                    },
+                    backgroundColor: 'white',
+                    fontFamily: '"Permanent Marker", cursive',
+                    color: 'black',
+                },
+            },
+        },
+        MuiButton: {
+            styleOverrides: {
+                root: {
+                    fontFamily: '"Permanent Marker", cursive',
+                    backgroundColor: '#4CAF50', // Green from the image
+                    color: 'white',
+                    border: '2px solid black',
+                    borderRadius: '8px',
+                    boxShadow: '3px 3px 0px black', // Sketchy shadow for button
+                    '&:hover': {
+                        backgroundColor: '#45a049', // Darker green on hover
+                        boxShadow: '1px 1px 0px black', // Smaller shadow on hover
+                    },
+                },
+            },
+        },
+        MuiTypography: {
+            styleOverrides: {
+                root: {
+                    fontFamily: '"Permanent Marker", cursive',
+                    color: 'black',
+                },
+            },
+        },
+    },
+});
+
+// Styled Box for the container to apply background and simplified dashed lines
+const SketchContainer = styled(Box)(({ theme }) => ({
+    minHeight: '100vh', // Keep minHeight to ensure it covers the viewport if content is short
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'flex-start', // Changed from 'center' to 'flex-start'
+    paddingTop: theme.spacing(8), // Add some top padding to push it down slightly, adjust as needed
+    paddingBottom: theme.spacing(4), // Add some bottom padding
+    backgroundColor: '#f0f0f0', // Light grey background
+    position: 'relative',
+    overflow: 'hidden', // Hide overflow for dashed lines
+    // Removed the '::before' and '::after' pseudo-elements for the dashed lines
+}));
+
+// Styled Box for the registration/login box - copied from DevRegistration
+const LoginBox = styled(Box)(({ theme }) => ({
+    backgroundColor: 'white',
+    padding: theme.spacing(4),
+    borderRadius: '12px', // Slightly rounded corners for the box
+    border: '2px solid black', // Black border for the box
+    boxShadow: '6px 6px 0px black', // Sketchy shadow for the main box
+    maxWidth: '500px',
+    width: '100%',
+    textAlign: 'center',
+    position: 'relative', // Ensure content is above pseudo-elements
+    zIndex: 1,
+}));
 
 export const OrgLogin = () => {
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-  const nav = useNavigate();
+    const [loggedIn, setLoggedIn] = useState(false);
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
+    const nav = useNavigate();
 
-  const login = (e) => {
-    e.preventDefault();
+    const login = (e) => {
+        e.preventDefault();
 
-    axios
-      .post(
-        "http://localhost:8000/api/org/login",
-        {
-          email: email,
-          password: password,
-        },
-        {
-          withCredentials: true,
-        }
-      )
-      .then((res) => {
-        console.log(res);
-        console.log("Organization logging in...");
-        setErrorMessage("");
-        setLoggedIn(true);
-        nav("/org/dashboard"); // or wherever you want to redirect after login
-      })
-      .catch((err) => {
-        console.log(err.response?.data || err);
-        setErrorMessage(err.response?.data?.message || "Login failed");
-      });
-  };
+        axios
+            .post(
+                "http://localhost:8000/api/org/login",
+                {
+                    email: email,
+                    password: password,
+                },
+                {
+                    withCredentials: true,
+                }
+            )
+            .then((res) => {
+                console.log(res);
+                console.log("Organization logging in...");
+                setErrorMessage("");
+                setLoggedIn(true);
+                nav("/org/dashboard"); // or wherever you want to redirect after login
+            })
+            .catch((err) => {
+                console.log(err.response?.data || err);
+                setErrorMessage(err.response?.data?.message || "Login failed");
+            });
+    };
 
-  return (
-    <div style={{ maxWidth: "500px", margin: "auto", padding: "2rem" }}>
-      <h1 style={{ color: "black" }}>Welcome Organizations!</h1>
-      <p style={{ color: "black" }}>
-        Let’s connect you with talented developers. Sign in to manage your jobs and find your next hire!
-      </p>
+    return (
+        <ThemeProvider theme={sketchTheme}>
+            <SketchContainer>
+                <LoginBox>
+                    <Typography variant="h4" component="h1" gutterBottom>
+                        Welcome Organizations!
+                    </Typography>
+                    <Typography variant="body1" sx={{ mb: 3 }}>
+                        Let’s connect you with talented developers. Sign in to manage your jobs and find your next hire!
+                    </Typography>
 
-      {errorMessage && (
-        <p style={{ color: "red", fontWeight: "bold" }}>{errorMessage}</p>
-      )}
+                    {errorMessage && (
+                        <Typography color="error" sx={{ mb: 2, fontWeight: 'bold', color: 'red' }}>
+                            {errorMessage}
+                        </Typography>
+                    )}
 
-      <form onSubmit={login}>
-        <div>
-          <label htmlFor="email" style={{ color: "black" }}>Email Address:</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            autoFocus
-            style={{ width: "100%", padding: "0.5rem", marginTop: "0.25rem", color: "black" }}
-          />
-        </div>
+                    <Box component="form" onSubmit={login} sx={{ mt: 2 }}>
+                        <TextField
+                            label="Email Address"
+                            type="email"
+                            id="email"
+                            name="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            fullWidth
+                            margin="normal"
+                            autoFocus
+                        />
 
-        <div style={{ marginTop: "1rem" }}>
-          <label htmlFor="password" style={{ color: "black" }}>Password:</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            style={{ width: "100%", padding: "0.5rem", marginTop: "0.25rem" }}
-          />
-        </div>
+                        <TextField
+                            label="Password"
+                            type="password"
+                            id="password"
+                            name="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            fullWidth
+                            margin="normal"
+                            required
+                        />
 
-        <button
-          type="submit"
-          style={{
-            marginTop: "1.5rem",
-            width: "100%",
-            padding: "0.75rem",
-            backgroundColor: "orange",
-            border: "none",
-            cursor: "pointer",
-            fontWeight: "bold",
-          }}
-        >
-          Sign In
-        </button>
-      </form>
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            fullWidth
+                            sx={{ mt: 3, mb: 2 }}
+                        >
+                            Sign In
+                        </Button>
+                    </Box>
 
-      <p >
-        <a href="/org/register" style={{ color: "Black" }}>
-                  Don't have an account? Register Here!
-        </a>
-      </p>
-    </div>
-  );
+                    <Typography variant="body2" sx={{ mt: 2 }}>
+                        <Link to="/org/register" style={{ textDecoration: 'none', color: 'black', fontFamily: '"Permanent Marker", cursive' }}>
+                            Don't have an account? Register Here!
+                        </Link>
+                    </Typography>
+                </LoginBox>
+            </SketchContainer>
+        </ThemeProvider>
+    );
 };

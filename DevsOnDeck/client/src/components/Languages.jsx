@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
-import { useNavigate } from "react-router-dom";
-import Form from 'react-bootstrap/Form';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import '../App.css';
-import { useParams } from 'react-router-dom';
+import {
+  Box,
+  Typography,
+  Grid,
+  Button,
+  TextField,
+  Avatar,
+  Container,
+  Stack,
+} from '@mui/material';
 
-// Icons
+// Import icons
 import cssIcon from './icons/css.png';
 import csharpIcon from './icons/csharp.jpg';
 import goIcon from './icons/go.jpg';
@@ -22,108 +26,131 @@ import swiftIcon from './icons/swift.png';
 import phpIcon from './icons/php.png';
 import cppIcon from './icons/c++.png';
 
-const Languages = (props) => {
+const languageOptions = [
+  { name: 'csharp', icon: csharpIcon },
+  { name: 'css', icon: cssIcon },
+  { name: 'go', icon: goIcon },
+  { name: 'html', icon: htmlIcon },
+  { name: 'java', icon: javaIcon },
+  { name: 'js', icon: jsIcon },
+  { name: 'python', icon: pythonIcon },
+  { name: 'ruby', icon: rubyIcon },
+  { name: 'sql', icon: sqlIcon },
+  { name: 'swift', icon: swiftIcon },
+  { name: 'php', icon: phpIcon },
+  { name: 'c++', icon: cppIcon },
+];
+
+const Languages = () => {
   const [languages, setLanguages] = useState([]);
-  const [bio, setBio] = useState("");
-  const [langImages, setLangImages] = useState([]);
-  const [count, setCount] = useState(0);
+  const [bio, setBio] = useState('');
   const [errors, setErrors] = useState([]);
+  const navigate = useNavigate();
   const { devId } = useParams();
 
-  const navigate = useNavigate();
-
-  const AddSkills = (e) => {
-    e.preventDefault();
-axios.post(`http://localhost:8000/api/skills/languages/${devId}`, {
-      languages,
-      bio
-    })
-      .then(() => {
-        navigate('/');
-      })
-      .catch(err => {
-        const errorResponse = err.response?.data?.errors;
-        const errorArr = [];
-        if (errorResponse) {
-          for (const key of Object.keys(errorResponse)) {
-            errorArr.push(errorResponse[key].message);
-          }
-        } else {
-          errorArr.push("An unexpected error occurred.");
-        }
-        setErrors(errorArr);
-      });
-  };
-
-  const AddLang = (img, lang) => {
-    if (count < 5 && !languages.includes(lang)) {
+  const handleAddLang = (lang) => {
+    if (languages.length < 5 && !languages.includes(lang)) {
       setLanguages([...languages, lang]);
-      setLangImages([...langImages, img]);
-      setCount(count + 1);
     }
   };
 
+  const handleSubmit = () => {
+    axios.post(`http://localhost:8000/api/skills/languages/${devId}`, {
+      languages,
+      bio,
+    })
+      .then(() => navigate('/'))
+      .catch(err => {
+        const errs = err.response?.data?.errors;
+        const messages = errs ? Object.values(errs).map(e => e.message) : ['Unexpected error'];
+        setErrors(messages);
+      });
+  };
+
   return (
-    <Container className="contStyle">
-      <h3 className="languages-heading">Pick Your Top 5 Languages</h3>
-      <Row>
-        <Col md={7}>
-          <div className="langContainer mb-3">
-            {langImages.map((img, index) => (
-              <img key={index} src={img} alt={`lang-${index}`} className="iconStyle2" />
-            ))}
-          </div>
-          <div className="iconcontainer">
-            <table>
-              <tbody>
-                <tr>
-                  <td><img src={csharpIcon} alt="csharp" className="iconStyle" onClick={() => AddLang(csharpIcon, "csharp")} /></td>
-                  <td><img src={cssIcon} alt="css" className="iconStyle" onClick={() => AddLang(cssIcon, "css")} /></td>
-                  <td><img src={goIcon} alt="go" className="iconStyle" onClick={() => AddLang(goIcon, "go")} /></td>
-                  <td><img src={htmlIcon} alt="html" className="iconStyle" onClick={() => AddLang(htmlIcon, "html")} /></td>
-                </tr>
-                <tr>
-                  <td><img src={javaIcon} alt="java" className="iconStyle" onClick={() => AddLang(javaIcon, "java")} /></td>
-                  <td><img src={jsIcon} alt="js" className="iconStyle" onClick={() => AddLang(jsIcon, "js")} /></td>
-                  <td><img src={pythonIcon} alt="python" className="iconStyle" onClick={() => AddLang(pythonIcon, "python")} /></td>
-                  <td><img src={rubyIcon} alt="ruby" className="iconStyle" onClick={() => AddLang(rubyIcon, "ruby")} /></td>
-                </tr>
-                <tr>
-                  <td><img src={sqlIcon} alt="sql" className="iconStyle" onClick={() => AddLang(sqlIcon, "sql")} /></td>
-                  <td><img src={swiftIcon} alt="swift" className="iconStyle" onClick={() => AddLang(swiftIcon, "swift")} /></td>
-                  <td><img src={phpIcon} alt="php" className="iconStyle" onClick={() => AddLang(phpIcon, "php")} /></td>
-                  <td><img src={cppIcon} alt="c++" className="iconStyle" onClick={() => AddLang(cppIcon, "c++")} /></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </Col>
+    <Container maxWidth="md" sx={{ mt: 4 }}>
+      <Typography variant="h4" textAlign="center" fontWeight="bold" mb={2} color="textPrimary">
+        Add Your Skills
+      </Typography>
 
-        {/* Short Bio Textarea next to language icons */}
-        <Col md={5}>
-          <h4 className="bio-heading">Short Bio</h4>
-          <Form.Control
-            as="textarea"
-            rows={14}
-            className="bio-textarea"
-            onChange={(e) => setBio(e.target.value)}
-            value={bio}
-            style={{ resize: 'none', width: '100%' }}
-          />
-        </Col>
-      </Row>
+      <Typography variant="h6" mb={1} color="textPrimary">
+        Pick Your Top 5 Languages
+      </Typography>
 
-      <div className="btncont mt-4">
-        <button className="skipbtn" onClick={() => navigate("/devs/login")}>Skip This Step</button>
-        <button onClick={AddSkills}>Finished?</button>
-      </div>
+      {/* Selected language row */}
+      <Box
+        display="flex"
+        alignItems="center"
+        gap={1}
+        sx={{ border: '1px solid #ccc', p: 1, borderRadius: 1, minHeight: 60, mb: 3 }}
+      >
+        {languages.map((lang, idx) => {
+          const img = languageOptions.find(l => l.name === lang)?.icon;
+          return <Avatar key={idx} src={img} alt={lang} sx={{ width: 40, height: 40 }} />;
+        })}
+      </Box>
 
+      <Grid container spacing={2}>
+        {languageOptions.map((langObj) => (
+          <Grid item xs={3} sm={2} key={langObj.name}>
+            <Avatar
+              src={langObj.icon}
+              alt={langObj.name}
+              onClick={() => handleAddLang(langObj.name)}
+              sx={{
+                width: 48,
+                height: 48,
+                cursor: 'pointer',
+                border: languages.includes(langObj.name) ? '2px solid green' : 'none',
+              }}
+            />
+            <Typography variant="caption" display="block" textAlign="center" color="textPrimary">
+              {langObj.name.toUpperCase()}
+            </Typography>
+          </Grid>
+        ))}
+      </Grid>
+
+      {/* Bio box */}
+      <Box mt={4}>
+        <Typography variant="h6" gutterBottom color="textPrimary">
+          Short Bio
+        </Typography>
+        <TextField
+          multiline
+          rows={6}
+          fullWidth
+          placeholder="Add more about yourself here..."
+          value={bio}
+          onChange={(e) => setBio(e.target.value)}
+          InputLabelProps={{
+            style: { color: 'black' },
+          }}
+          sx={{
+            input: { color: 'black' },
+          }}
+        />
+      </Box>
+
+      {/* Buttons */}
+      <Stack direction="row" justifyContent="space-between" mt={4}>
+        <Button variant="outlined" onClick={() => navigate('/devs/login')}>
+          Skip This Step
+        </Button>
+        <Button variant="contained" onClick={handleSubmit}>
+         Finished
+        </Button>
+      </Stack>
+
+      {/* Error messages */}
       {errors.length > 0 && (
-        <div className="error-messages" style={{ color: 'red', marginTop: '20px', textAlign: 'center' }}>
-          {errors.map((err, index) => (
-            <p key={index}>{err}</p>
+        <Box mt={2} color="red">
+          {errors.map((err, idx) => (
+            <Typography key={idx} variant="body2" color="error">
+              {err}
+            </Typography>
           ))}
-        </div>
+        </Box>
       )}
     </Container>
   );

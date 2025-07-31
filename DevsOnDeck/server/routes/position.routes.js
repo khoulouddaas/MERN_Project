@@ -5,7 +5,9 @@ module.exports = (app) => {
 
   app.post('/api/positions', Poscontroller.createPosition);
 
-  app.get('/positions/:positionId', Poscontroller.FindOneSinglePosition);
+  app.get('/api/positions/:positionId', Poscontroller.FindOneSinglePosition);
+
+    app.get('/api/positions/:positionId/devs', Poscontroller.FindDevsForPosition);
 
  
 };
