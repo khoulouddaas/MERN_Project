@@ -311,25 +311,7 @@ export const DevList = () => {
                                                                 {dev.bio || 'No bio available'}
                                                             </Typography>
                                                         </Grid>
-                                                        <Grid item xs={2} textAlign="right">
-                                                            <Button
-                                                                variant="contained"
-                                                                color="error"
-                                                                size="small"
-                                                                onClick={() => handleOpenConfirm(dev._id)}
-                                                                sx={{
-                                                                    fontFamily: '"Permanent Marker", cursive',
-                                                                    border: '2px solid black',
-                                                                    borderRadius: '8px',
-                                                                    boxShadow: '3px 3px 0px black',
-                                                                    '&:hover': {
-                                                                        boxShadow: '1px 1px 0px black',
-                                                                    },
-                                                                }}
-                                                            >
-                                                                Delete
-                                                            </Button>
-                                                        </Grid>
+                                                       
                                                     </Grid>
                                                 </CardContent>
                                             </Card>
@@ -342,63 +324,7 @@ export const DevList = () => {
                 </Container>
             </SketchContainer>
 
-            {/* Confirmation Dialog */}
-            <Dialog
-                open={openConfirm}
-                onClose={handleCloseConfirm}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-                PaperProps={{
-                    sx: {
-                        border: '2px solid black',
-                        borderRadius: '12px',
-                        boxShadow: '6px 6px 0px black',
-                        backgroundColor: 'white',
-                        fontFamily: '"Permanent Marker", cursive',
-                    }
-                }}
-            >
-                <DialogTitle id="alert-dialog-title" sx={{ fontFamily: '"Permanent Marker", cursive', color: 'black' }}>
-                    {"Confirm Deletion"}
-                </DialogTitle>
-                <DialogContent>
-                    <DialogContentText id="alert-dialog-description" sx={{ fontFamily: '"Permanent Marker", cursive', color: 'black' }}>
-                        Are you sure you want to delete this developer? This action cannot be undone.
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button
-                        onClick={handleCloseConfirm}
-                        sx={{
-                            fontFamily: '"Permanent Marker", cursive',
-                            border: '2px solid black',
-                            borderRadius: '8px',
-                            boxShadow: '3px 3px 0px black',
-                            '&:hover': {
-                                boxShadow: '1px 1px 0px black',
-                            },
-                        }}
-                    >
-                        Cancel
-                    </Button>
-                    <Button
-                        onClick={handleDeleteDev}
-                        color="error"
-                        autoFocus
-                        sx={{
-                            fontFamily: '"Permanent Marker", cursive',
-                            border: '2px solid black',
-                            borderRadius: '8px',
-                            boxShadow: '3px 3px 0px black',
-                            '&:hover': {
-                                boxShadow: '1px 1px 0px black',
-                            },
-                        }}
-                    >
-                        Delete
-                    </Button>
-                </DialogActions>
-            </Dialog>
+         
         </ThemeProvider>
     );
 };

@@ -160,7 +160,8 @@ const Newposition = () => {
         Skills: [],
     });
 
-    const [errors, setErrors] = useState([]);
+    // Changed errors to an object to store messages per field
+    const [errors, setErrors] = useState({});
 
     const handleSkillClick = (skill) => {
         const updatedSkills = formData.Skills.includes(skill)
@@ -169,29 +170,35 @@ const Newposition = () => {
 
         if (updatedSkills.length <= 5) {
             setFormData({ ...formData, Skills: updatedSkills });
+            // Clear skills error if a skill is selected
+            if (updatedSkills.length > 0) {
+                setErrors(prev => ({ ...prev, Skills: undefined }));
+            }
         }
     };
 
     const validateForm = (data) => {
-        const errors = {};
-        if (!data.Name) errors.Name = 'Name is required';
-        if (!data.Description) errors.Description = 'Description is required';
-        if (!data.Skills || data.Skills.length === 0) errors.Skills = 'Please choose at least one skill';
-        return errors;
+        const newErrors = {};
+        if (!data.Name) newErrors.Name = 'Name is required';
+        if (!data.Description) newErrors.Description = 'Description is required';
+        if (!data.Skills || data.Skills.length === 0) newErrors.Skills = 'Please choose at least one skill';
+        return newErrors;
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         const validationErrors = validateForm(formData);
+        setErrors(validationErrors); // Set all validation errors
+
         if (Object.keys(validationErrors).length > 0) {
-            setErrors(Object.values(validationErrors));
-            return;
+            return; // Stop submission if there are errors
         }
         try {
             await axios.post('http://localhost:8000/api/positions', formData);
             navigate('/org/dashboard');
         } catch (error) {
-            setErrors([error.message || 'Failed to create position']);
+            // Handle API errors, potentially setting a general error message
+            setErrors(prev => ({ ...prev, general: error.message || 'Failed to create position' }));
         }
     };
 
@@ -203,14 +210,26 @@ const Newposition = () => {
                         Add A Position
                     </Typography>
 
+                    {/* Display general error if any */}
+                    {errors.general && (
+                        <Typography color="error" sx={{ mb: 2, color: 'red' }}>
+                            {errors.general}
+                        </Typography>
+                    )}
+
                     <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
                         <TextField
                             fullWidth
                             label="Name"
                             variant="outlined"
                             value={formData.Name}
-                            onChange={(e) => setFormData({ ...formData, Name: e.target.value })}
+                            onChange={(e) => {
+                                setFormData({ ...formData, Name: e.target.value });
+                                setErrors(prev => ({ ...prev, Name: undefined })); // Clear error on change
+                            }}
                             sx={{ mb: 3 }}
+                            error={!!errors.Name}
+                            helperText={errors.Name}
                         />
 
                         <TextField
@@ -220,8 +239,13 @@ const Newposition = () => {
                             label="Description"
                             variant="outlined"
                             value={formData.Description}
-                            onChange={(e) => setFormData({ ...formData, Description: e.target.value })}
+                            onChange={(e) => {
+                                setFormData({ ...formData, Description: e.target.value });
+                                setErrors(prev => ({ ...prev, Description: undefined })); // Clear error on change
+                            }}
                             sx={{ mb: 3 }}
+                            error={!!errors.Description}
+                            helperText={errors.Description}
                         />
 
                         <Typography variant="h6" gutterBottom mb={1}>
@@ -235,7 +259,7 @@ const Newposition = () => {
                                 border: '2px solid black', // Sketchy border
                                 borderRadius: '8px', // Slightly rounded
                                 p: 1,
-                                mb: 3,
+                                mb: 1, // Reduced margin bottom to place helperText closer
                                 display: 'flex',
                                 flexWrap: 'wrap',
                                 gap: 1,
@@ -270,6 +294,13 @@ const Newposition = () => {
                                 />
                             ))}
                         </Box>
+                        {/* Display skills error below the skills box */}
+                        {errors.Skills && (
+                            <Typography variant="body2" color="error" textAlign="center" sx={{ color: 'red', mb: 3 }}>
+                                {errors.Skills}
+                            </Typography>
+                        )}
+
 
                         <Stack direction="row" justifyContent="space-between" spacing={2}>
                             <Button
@@ -291,16 +322,6 @@ const Newposition = () => {
                                 Add Position
                             </Button>
                         </Stack>
-
-                        {errors.length > 0 && (
-                            <Box mt={3}>
-                                {errors.map((err, idx) => (
-                                    <Typography key={idx} variant="body2" color="error" textAlign="center" sx={{ color: 'red' }}>
-                                        {err}
-                                    </Typography>
-                                ))}
-                            </Box>
-                        )}
                     </Box>
                 </FormBox>
             </SketchContainer>
