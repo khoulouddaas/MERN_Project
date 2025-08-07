@@ -11,7 +11,9 @@ module.exports = (app) => {
     app.post("/api/devs/logout", DevController.logout)
     app.get("/api/devs", authenticateDev, DevController.getLoggedInDev)
     app.delete("/api/devs/:id", DevController.deleteDev)
-    app.get('/api/devswithskills', DevController.getAllDevelopersWithSkills);
+    app.get('/api/devswithskills', DevController.getAllDevelopersWithSkills); 
+app.post('/api/devs/google-login', DevController.googleLogin);
+app.post('/api/devs/google-sign', DevController.googleLoginWithToken);
 
 app.post('/api/skills/languages/:devId', SkillController.createNewSkill);
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom'; // Import useNavigate
 import axios from 'axios';
 import {
     Container,
@@ -9,12 +9,12 @@ import {
     CardContent,
     Grid,
     CircularProgress,
-    Button, // Ensure Button is imported for the delete button
-    Dialog,        // Added for custom confirm dialog
-    DialogActions, // Added for custom confirm dialog
-    DialogContent, // Added for custom confirm dialog
-    DialogContentText, // Added for custom confirm dialog
-    DialogTitle,   // Added for custom confirm dialog
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
 } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { styled } from '@mui/system';
@@ -165,13 +165,14 @@ const ContentBox = styled(Box)(({ theme }) => ({
 
 const PositionDetails = () => {
     const { positionId } = useParams();
+    const navigate = useNavigate(); // Initialize useNavigate
     const [position, setPosition] = useState(null);
     const [devs, setDevs] = useState([]);
     const [loadingPosition, setLoadingPosition] = useState(true);
     const [loadingDevs, setLoadingDevs] = useState(true);
     const [error, setError] = useState(null);
-    const [openConfirm, setOpenConfirm] = useState(false); // State for confirmation dialog
-    const [devToDelete, setDevToDelete] = useState(null); // State to store dev ID to delete
+    const [openConfirm, setOpenConfirm] = useState(false);
+    const [devToDelete, setDevToDelete] = useState(null);
 
     useEffect(() => {
         // Fetch position details
@@ -214,17 +215,20 @@ const PositionDetails = () => {
     const handleDeleteDev = async () => {
         if (devToDelete) {
             try {
-                // Assuming an API endpoint for deleting a developer by ID
                 await axios.delete(`http://localhost:8000/api/devs/${devToDelete}`);
                 setDevs(devs.filter((dev) => dev._id !== devToDelete));
                 handleCloseConfirm();
             } catch (error) {
                 console.error('Failed to delete developer:', error);
-                // Optionally, set an error message to display to the user
                 setError('Failed to delete developer.');
                 handleCloseConfirm();
             }
         }
+    };
+    
+    // Function to handle navigation
+    const handleBackToDashboard = () => {
+        navigate('/org/dashboard');
     };
 
     if (loadingPosition) return (
@@ -257,7 +261,7 @@ const PositionDetails = () => {
                         {position.Name}
                     </Typography>
 
-                    {/* Removed the Grid item for "Required Skills" and "Description" */}
+                   
 
                     {/* Available Developers section now takes full width */}
                     <Box mt={4}>
@@ -274,7 +278,7 @@ const PositionDetails = () => {
                                     <Card key={dev._id} sx={{ marginBottom: 2 }}>
                                         <CardContent>
                                             <Grid container alignItems="flex-start" spacing={2}>
-                                                <Grid item xs={10} sx={{ textAlign: 'left' }}> {/* Aligned to left */}
+                                                <Grid item xs={10} sx={{ textAlign: 'left' }}>
                                                     <Typography variant="h6" sx={{ color: '#ff8c00' }}>
                                                         <Link
                                                             to={`/devs/${dev._id}`}
@@ -294,18 +298,28 @@ const PositionDetails = () => {
                                                         {dev.bio || 'No bio available'}
                                                     </Typography>
                                                 </Grid>
-                                               
+
+                                                
                                             </Grid>
                                         </CardContent>
+                                        
                                     </Card>
+                                    
                                 ))
                             )}
                         </Box>
+                 <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+    <Button
+        variant="contained"
+        color="primary"
+        onClick={handleBackToDashboard}
+    >
+        Back to Dashboard
+    </Button>
+</Box>
                     </Box>
                 </ContentBox>
             </SketchContainer>
-
-          
         </ThemeProvider>
     );
 };

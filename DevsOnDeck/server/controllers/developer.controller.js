@@ -1,6 +1,9 @@
 const Developer = require("../models/developer.model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { OAuth2Client } = require('google-auth-library');
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 module.exports = {
 
@@ -136,6 +139,46 @@ module.exports = {
                 res.json({message: "couldn't delete dev!", error: err});
             })
     },
+  googleLogin: async (req, res) => {
+  try {
+    const { token } = req.body;
+
+    if (!token) {
+      return res.status(400).json({ error: "Token missing from request" });
+    }
+
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+
+    const { email, given_name, family_name } = payload;
+
+    if (!email) {
+      return res.status(400).json({ error: "Invalid Google token payload" });
+    }
+
+    let developer = await Developer.findOne({ email });
+
+    if (!developer) {
+      developer = await Developer.create({
+        firstName: given_name || "Google",
+        lastName: family_name || "User",
+        email,
+        password: "google_oauth_default", // dummy password
+      });
+    }
+
+    res.status(200).json({ message: "Google login successful", dev: developer });
+
+  } catch (err) {
+    console.error("❌ Google Login Error:", err);
+    res.status(500).json({ error: "Google login failed", details: err.message });
+  }
+},
+
 
 getAllDevelopersWithSkills: (req, res) => {
   Developer.aggregate([
@@ -179,7 +222,57 @@ getAllDevelopersWithSkills: (req, res) => {
       console.error('Aggregation error:', err);
       res.status(500).json({ error: 'Something went wrong' });
     });
+},
+googleLoginWithToken : async (req, res) => {
+ const { token } = req.body;
+
+    try {
+        // Verify Google token
+        const ticket = await client.verifyIdToken({
+            idToken: token,
+            audience: process.env.GOOGLE_CLIENT_ID,
+        });
+
+        const payload = ticket.getPayload();
+        const { email, given_name, family_name, sub } = payload;
+
+        // Check if dev already exists
+        let dev = await Developer.findOne({ email });
+
+        if (!dev) {
+            // Create new developer if not found
+            dev = await Developer.create({
+                email,
+                firstName: given_name,
+                lastName: family_name,
+                password: sub // store sub (unique ID) as dummy password or handle differently
+            });
+        }
+
+        // Issue your own JWT token as cookie
+        const tokenPayload = {
+            id: dev._id,
+            email: dev.email,
+            firstname: dev.firstName
+        };
+
+        const tokenCookie = jwt.sign(tokenPayload, process.env.JWT_SECRET, {
+            expiresIn: '15m',
+        });
+
+        res.cookie("devtoken", tokenCookie, {
+            httpOnly: true,
+            expires: new Date(Date.now() + 900000) // 15 minutes
+        }).json({
+            message: "Google Login Success!",
+            devLoggedIn: dev.firstName,
+            devId: dev._id
+        });
+
+    } catch (err) {
+        console.error("🔴 Google login with token error:", err);
+        res.status(400).json({ message: "Invalid Google token" });
+    }
+
 }
-
-
 }

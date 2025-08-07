@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import axios from 'axios';
-import { AuthContext } from '../context/AuthContext'; // Adjust the path if needed
+import { AuthContext } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import {
     Box,
@@ -10,8 +10,9 @@ import {
 } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { styled } from '@mui/system';
+import { GoogleLogin } from '@react-oauth/google';
 
-// Custom theme for the sketchy look
+// Sketch theme
 const sketchTheme = createTheme({
     typography: {
         fontFamily: '"Permanent Marker", cursive',
@@ -92,7 +93,6 @@ const sketchTheme = createTheme({
     },
 });
 
-// Styled container box
 const SketchContainer = styled(Box)(({ theme }) => ({
     minHeight: '100vh',
     display: 'flex',
@@ -105,7 +105,6 @@ const SketchContainer = styled(Box)(({ theme }) => ({
     overflow: 'hidden',
 }));
 
-// Styled login box
 const LoginBox = styled(Box)(({ theme }) => ({
     backgroundColor: 'white',
     padding: theme.spacing(4),
@@ -124,30 +123,36 @@ export const DevLogin = () => {
     const [password, setPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const nav = useNavigate();
-
-    // Get login function from AuthContext
     const { login } = useContext(AuthContext);
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
         axios
-            .post(
-                "http://localhost:8000/api/devs/login",
-                { email, password },
-                { withCredentials: true }
-            )
+            .post("http://localhost:8000/api/devs/login", { email, password }, { withCredentials: true })
             .then((res) => {
-                console.log("Logging in...", res);
                 setErrorMessage("");
-                login('dev');  // Update context state
+                login('dev');
                 nav("/devs/profile");
             })
             .catch((err) => {
-                console.log(err.response?.data);
                 setErrorMessage(err.response?.data?.message || "Login failed");
             });
     };
+
+   const handleGoogleLogin = async (credentialResponse) => {
+  try {
+    await axios.post("http://localhost:8000/api/devs/google-sign", { token },
+
+      { withCredentials: true }               // ← send/receive cookies
+    );
+    login('dev');
+    nav("/devs/profile");
+  } catch (err) {
+    setErrorMessage("Google Login Failed");
+  }
+};
+
 
     return (
         <ThemeProvider theme={sketchTheme}>
@@ -177,7 +182,6 @@ export const DevLogin = () => {
                             margin="normal"
                             autoFocus
                         />
-
                         <TextField
                             label="Password"
                             type="password"
@@ -185,9 +189,7 @@ export const DevLogin = () => {
                             onChange={(e) => setPassword(e.target.value)}
                             fullWidth
                             margin="normal"
-                            
                         />
-
                         <Button
                             type="submit"
                             variant="contained"
@@ -201,11 +203,22 @@ export const DevLogin = () => {
                     <Typography variant="body2" sx={{ mt: 2 }}>
                         <Link
                             to="/devs/register"
-                            style={{ textDecoration: 'none', color: 'black', fontFamily: '"Permanent Marker", cursive' }}
+                            style={{
+                                textDecoration: 'none',
+                                color: 'black',
+                                fontFamily: '"Permanent Marker", cursive'
+                            }}
                         >
                             Don't have an account? Register Here!
                         </Link>
                     </Typography>
+
+                    <Box sx={{ mt: 4 }}>
+                        <GoogleLogin
+                            onSuccess={handleGoogleLogin}
+                            onError={() => setErrorMessage("Google Sign In failed")}
+                        />
+                    </Box>
                 </LoginBox>
             </SketchContainer>
         </ThemeProvider>

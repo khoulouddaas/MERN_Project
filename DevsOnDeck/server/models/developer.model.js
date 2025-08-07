@@ -16,20 +16,15 @@ const DeveloperSchema = new mongoose.Schema({
     },
     address: {
         type: String,
-        required: [true, "Please enter an address"]
+        required: [false]
     },
     city: {
         type: String,
-        required: [true, "Please enter a city"]
+        required: [false]
     },
     state: {
         type: String,
-        required: [true, "State is required"],
-        enum: ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
-            'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA',
-            'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY',
-            'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX',
-            'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY']
+        required: [false]
     },
     password: {
         type: String,
@@ -37,20 +32,6 @@ const DeveloperSchema = new mongoose.Schema({
         minlength: [6, "Password must be at least 6 characters"]
     }
 }, { timestamps: true });
-
-// Virtual for confirmPassword (not stored in DB)
-DeveloperSchema.virtual('confirmPassword')
-    .set(function(value) {
-        this._confirmPassword = value;
-    });
-
-// Validation middleware: check if password and confirmPassword match
-DeveloperSchema.pre('validate', function(next) {
-    if (this.password !== this._confirmPassword) {
-        this.invalidate('confirmPassword', 'Passwords must match!');
-    }
-    next();
-});
 
 // Hash password before saving
 DeveloperSchema.pre('save', async function(next) {

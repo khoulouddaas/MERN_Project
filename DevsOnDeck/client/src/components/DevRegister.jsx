@@ -16,11 +16,12 @@ import {
 } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { styled } from '@mui/system';
+import { GoogleLogin } from '@react-oauth/google'; // ✅ Import GoogleLogin
 
-// Custom theme for the sketchy look
+// Custom theme
 const sketchTheme = createTheme({
     typography: {
-        fontFamily: '"Permanent Marker", cursive', // Use a sketchy font
+        fontFamily: '"Permanent Marker", cursive',
     },
     components: {
         MuiTextField: {
@@ -28,15 +29,15 @@ const sketchTheme = createTheme({
                 root: {
                     '& .MuiOutlinedInput-root': {
                         '& fieldset': {
-                            borderColor: 'black', // Default border
+                            borderColor: 'black',
                             borderWidth: '2px',
                             borderRadius: '8px',
                         },
                         '&:hover fieldset': {
-                            borderColor: 'black', // Hover border
+                            borderColor: 'black',
                         },
                         '&.Mui-focused fieldset': {
-                            borderColor: 'black', // Focused border
+                            borderColor: 'black',
                         },
                         backgroundColor: 'white',
                     },
@@ -75,14 +76,14 @@ const sketchTheme = createTheme({
             styleOverrides: {
                 root: {
                     fontFamily: '"Permanent Marker", cursive',
-                    backgroundColor: '#4CAF50', // Green from the image
+                    backgroundColor: '#4CAF50',
                     color: 'white',
                     border: '2px solid black',
                     borderRadius: '8px',
-                    boxShadow: '3px 3px 0px black', // Sketchy shadow for button
+                    boxShadow: '3px 3px 0px black',
                     '&:hover': {
-                        backgroundColor: '#45a049', // Darker green on hover
-                        boxShadow: '1px 1px 0px black', // Smaller shadow on hover
+                        backgroundColor: '#45a049',
+                        boxShadow: '1px 1px 0px black',
                     },
                 },
             },
@@ -98,31 +99,28 @@ const sketchTheme = createTheme({
     },
 });
 
-// Styled Box for the container to apply background and simplified dashed lines
 const SketchContainer = styled(Box)(({ theme }) => ({
     minHeight: '100vh',
     display: 'flex',
     justifyContent: 'center',
-    alignItems: 'flex-start', // Changed from 'center' to 'flex-start'
-    paddingTop: theme.spacing(8), // Add some top padding to push it down slightly, adjust as needed
-    paddingBottom: theme.spacing(4), // Add some bottom padding
-    backgroundColor: '#f0f0f0', // Light grey background
+    alignItems: 'flex-start',
+    paddingTop: theme.spacing(8),
+    paddingBottom: theme.spacing(4),
+    backgroundColor: '#f0f0f0',
     position: 'relative',
-    overflow: 'hidden', // Hide overflow for dashed lines
-    // Removed the '::before' and '::after' pseudo-elements for the dashed lines
+    overflow: 'hidden',
 }));
 
-// Styled Box for the registration box
 const RegistrationBox = styled(Box)(({ theme }) => ({
     backgroundColor: 'white',
     padding: theme.spacing(4),
-    borderRadius: '12px', // Slightly rounded corners for the box
-    border: '2px solid black', // Black border for the box
-    boxShadow: '6px 6px 0px black', // Sketchy shadow for the main box
+    borderRadius: '12px',
+    border: '2px solid black',
+    boxShadow: '6px 6px 0px black',
     maxWidth: '500px',
     width: '100%',
     textAlign: 'center',
-    position: 'relative', // Ensure content is above pseudo-elements
+    position: 'relative',
     zIndex: 1,
 }));
 
@@ -154,9 +152,7 @@ const DevRegistration = () => {
 
         axios.post("http://localhost:8000/api/devs/register", dev, { withCredentials: true })
             .then((res) => {
-                console.log('Registration response:', res.data);
-
-                const devId = res.data.dev._id; // Correctly access nested _id
+                const devId = res.data.dev._id;
 
                 setDev({
                     firstName: "",
@@ -178,7 +174,7 @@ const DevRegistration = () => {
                 }
             })
             .catch((err) => {
-                if (err.response && err.response.data && err.response.data.errors) {
+                if (err.response?.data?.errors) {
                     setErrors(err.response.data.errors);
                 } else {
                     setErrors({ general: "Something went wrong. Please try again later." });
@@ -186,6 +182,26 @@ const DevRegistration = () => {
                 }
             });
     };
+
+   const handleGoogleSuccess = (credentialResponse) => {
+  console.log("✅ Google credential:", credentialResponse);
+
+  // Decode token or send it to backend to verify and get devId
+  axios.post('http://localhost:8000/api/devs/google-login', {
+    token: credentialResponse.credential
+  })
+  .then(res => {
+    const devId = res.data.dev._id; // adjust according to your backend response
+    if (devId) {
+      nav(`/devs/skills/languages/${devId}`);
+    } else {
+      console.error("Developer ID not found in response");
+    }
+  })
+  .catch(err => {
+    console.error("Google Login Failed:", err);
+  });
+};
 
     return (
         <ThemeProvider theme={sketchTheme}>
@@ -305,6 +321,14 @@ const DevRegistration = () => {
                         >
                             Register
                         </Button>
+                    </Box>
+
+                    {/* ✅ Google Login Button */}
+                    <Box mt={2}>
+                        <GoogleLogin
+                            onSuccess={handleGoogleSuccess}
+                            onError={() => console.log('Google Login Failed')}
+                        />
                     </Box>
 
                     <Typography variant="body2" sx={{ mt: 2 }}>

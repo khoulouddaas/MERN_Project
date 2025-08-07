@@ -13,29 +13,31 @@ import OrgRegistration from './components/OrgRegister';
 import DevList from './components/DevList';
 import Newposition from './components/NewPosition';
 import PositionDetails from './components/PositionDetails';
-
+import { GoogleOAuthProvider } from '@react-oauth/google';
 function App() {
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <NavBar />
-        <div className="content">
-          <Routes>
-            <Route element={<DevRegistration />} path="/devs/register" />
-            <Route element={<Home />} path="/" default />
-            <Route element={<DevLogin />} path="/devs/login" />
-            <Route path="/devs/skills/languages/:devId" element={<Languages />} />
-            <Route path="/devs/profile" element={<DevProfile />} />
-            <Route element={<OrgRegistration />} path="/org/register" />
-            <Route element={<OrgLogin />} path="/org/login" />
-            <Route path="/devs/update/:id" element={<DevEdit />} />
-            <Route element={<DevList />} path="/org/dashboard" />
-            <Route element={<Newposition />} path="/jobs/create" />
-            <Route path="/positions/:positionId" element={<PositionDetails />} />
-          </Routes>
-        </div>
-      </AuthProvider>
-    </BrowserRouter>
+    <GoogleOAuthProvider clientId="126352276927-thonm669gljb1igbig4hvpde187qt0b3.apps.googleusercontent.com">
+      <BrowserRouter>
+        <AuthProvider>
+          <NavBar />
+          <div className="content">
+            <Routes>
+              <Route element={<DevRegistration />} path="/devs/register" />
+              <Route element={<Home />} path="/" default />
+              <Route element={<DevLogin />} path="/devs/login" />
+              <Route path="/devs/skills/languages/:devId" element={<Languages />} />
+              <Route path="/devs/profile" element={<DevProfile />} />
+              <Route element={<OrgRegistration />} path="/org/register" />
+              <Route element={<OrgLogin />} path="/org/login" />
+              <Route path="/devs/update/:id" element={<DevEdit />} />
+              <Route element={<DevList />} path="/org/dashboard" />
+              <Route element={<Newposition />} path="/jobs/create" />
+              <Route path="/positions/:positionId" element={<PositionDetails />} />
+            </Routes>
+          </div>
+        </AuthProvider>
+      </BrowserRouter>
+    </GoogleOAuthProvider>
   );
 }
 
