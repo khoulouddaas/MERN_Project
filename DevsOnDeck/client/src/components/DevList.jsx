@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
     Box,
     Card,
@@ -13,11 +13,6 @@ import {
     List,
     ListItem,
     ListItemText,
-    Dialog,        // Added for custom confirm dialog
-    DialogActions, // Added for custom confirm dialog
-    DialogContent, // Added for custom confirm dialog
-    DialogContentText, // Added for custom confirm dialog
-    DialogTitle,   // Added for custom confirm dialog
     Stack
 } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -26,7 +21,7 @@ import { styled } from '@mui/system';
 // Custom theme for the sketchy look (copied from previous components)
 const sketchTheme = createTheme({
     typography: {
-        fontFamily: '"Permanent Marker", cursive', // Use a sketchy font
+        fontFamily: '"Permanent Marker", cursive',
     },
     components: {
         MuiTextField: {
@@ -34,15 +29,15 @@ const sketchTheme = createTheme({
                 root: {
                     '& .MuiOutlinedInput-root': {
                         '& fieldset': {
-                            borderColor: 'black', // Default border
+                            borderColor: 'black',
                             borderWidth: '2px',
                             borderRadius: '8px',
                         },
                         '&:hover fieldset': {
-                            borderColor: 'black', // Hover border
+                            borderColor: 'black',
                         },
                         '&.Mui-focused fieldset': {
-                            borderColor: 'black', // Focused border
+                            borderColor: 'black',
                         },
                         backgroundColor: 'white',
                     },
@@ -81,14 +76,14 @@ const sketchTheme = createTheme({
             styleOverrides: {
                 root: {
                     fontFamily: '"Permanent Marker", cursive',
-                    backgroundColor: '#4CAF50', // Green from the image
+                    backgroundColor: '#4CAF50',
                     color: 'white',
                     border: '2px solid black',
                     borderRadius: '8px',
-                    boxShadow: '3px 3px 0px black', // Sketchy shadow for button
+                    boxShadow: '3px 3px 0px black',
                     '&:hover': {
-                        backgroundColor: '#45a049', // Darker green on hover
-                        boxShadow: '1px 1px 0px black', // Smaller shadow on hover
+                        backgroundColor: '#45a049',
+                        boxShadow: '1px 1px 0px black',
                     },
                 },
             },
@@ -106,7 +101,7 @@ const sketchTheme = createTheme({
                 root: {
                     border: '2px solid black',
                     borderRadius: '8px',
-                    boxShadow: '4px 4px 0px black', // Smaller shadow for cards
+                    boxShadow: '4px 4px 0px black',
                     backgroundColor: 'white',
                 },
             },
@@ -116,7 +111,7 @@ const sketchTheme = createTheme({
                 root: {
                     border: '2px solid black',
                     borderRadius: '12px',
-                    boxShadow: '6px 6px 0px black', // Sketchy shadow for paper containers
+                    boxShadow: '6px 6px 0px black',
                     backgroundColor: 'white',
                 },
             },
@@ -124,35 +119,27 @@ const sketchTheme = createTheme({
     },
 });
 
-// Styled Box for the container to apply background and simplified dashed lines
 const SketchContainer = styled(Box)(({ theme }) => ({
     minHeight: '100vh',
     display: 'flex',
     justifyContent: 'center',
-    alignItems: 'flex-start', // Align to top
-    paddingTop: theme.spacing(8), // Add some top padding
-    paddingBottom: theme.spacing(4), // Add some bottom padding
-    backgroundColor: '#f0f0f0', // Light grey background
+    alignItems: 'flex-start',
+    paddingTop: theme.spacing(8),
+    paddingBottom: theme.spacing(4),
+    backgroundColor: '#f0f0f0',
     position: 'relative',
-    overflow: 'hidden', // Hide overflow for dashed lines
-    // Removed the '::before' and '::after' pseudo-elements for the dashed lines
+    overflow: 'hidden',
 }));
 
-export const DevList = () => {
+const DevList = () => {
     const [devList, setDevList] = useState([]);
-    const [company, setCompany] = useState({}); // This state is fetched but not used in the current UI
+    const [company, setCompany] = useState({});
     const [positions, setPositions] = useState([]);
-    const [openConfirm, setOpenConfirm] = useState(false);
-    const [devToDelete, setDevToDelete] = useState(null);
+    const [selectedPositionId, setSelectedPositionId] = useState(null);
+    const [loadingPositionId, setLoadingPositionId] = useState(null);
+    const [devCache, setDevCache] = useState({});
 
     const nav = useNavigate();
-
-    useEffect(() => {
-        axios
-            .get('http://localhost:8000/api/devswithskills')
-            .then((res) => setDevList(res.data))
-            .catch((err) => console.error('Error fetching devs with skills:', err));
-    }, []);
 
     useEffect(() => {
         axios
@@ -168,26 +155,30 @@ export const DevList = () => {
             .catch((err) => console.error('Error fetching positions:', err));
     }, []);
 
-    const handleOpenConfirm = (devId) => {
-        setDevToDelete(devId);
-        setOpenConfirm(true);
-    };
+    // Load devs with skills initially if you want - optional
+    // Or just wait for a position click to load devs
 
-    const handleCloseConfirm = () => {
-        setOpenConfirm(false);
-        setDevToDelete(null);
-    };
+    const handlePositionClick = async (positionId) => {
+        if (loadingPositionId === positionId) return; // Prevent repeated click spam
 
-    const handleDeleteDev = async () => {
-        if (devToDelete) {
-            try {
-                await axios.delete(`http://localhost:8000/api/devs/${devToDelete}`);
-                setDevList(devList.filter((dev) => dev._id !== devToDelete));
-                handleCloseConfirm();
-            } catch (error) {
-                console.error('Failed to delete developer:', error);
-                handleCloseConfirm();
-            }
+        setSelectedPositionId(positionId);
+
+        // Check cache first
+        if (devCache[positionId]) {
+            setDevList(devCache[positionId]);
+            return;
+        }
+
+        try {
+            setLoadingPositionId(positionId);
+            const res = await axios.get(`http://localhost:8000/api/positions/${positionId}/devs`);
+            setDevList(res.data);
+            setDevCache((prev) => ({ ...prev, [positionId]: res.data }));
+        } catch (error) {
+            console.error('Error fetching devs:', error);
+            setDevList([]);
+        } finally {
+            setLoadingPositionId(null);
         }
     };
 
@@ -202,7 +193,7 @@ export const DevList = () => {
                                 variant="contained"
                                 fullWidth
                                 sx={{
-                                    backgroundColor: '#3399ff', // Blue color for this button
+                                    backgroundColor: '#3399ff',
                                     marginBottom: 2,
                                     fontFamily: '"Permanent Marker", cursive',
                                     border: '2px solid black',
@@ -213,8 +204,7 @@ export const DevList = () => {
                                         boxShadow: '1px 1px 0px black',
                                     },
                                 }}
-                                component={Link}
-                                to="/jobs/create"
+                                onClick={() => nav('/jobs/create')}
                             >
                                 List a New Position
                             </Button>
@@ -232,19 +222,26 @@ export const DevList = () => {
                                         positions.map((pos) => (
                                             <ListItem
                                                 key={pos._id}
-                                                component={Link}
-                                                to={`/positions/${pos._id}`}
                                                 button
+                                                selected={selectedPositionId === pos._id}
+                                                onClick={() => handlePositionClick(pos._id)}
                                                 sx={{
                                                     border: '1px solid #e0e0e0',
                                                     borderRadius: '4px',
                                                     marginBottom: '8px',
+                                                    cursor: loadingPositionId === pos._id ? 'wait' : 'pointer',
+                                                    backgroundColor:
+                                                        selectedPositionId === pos._id ? '#a4bcd3ff' : 'inherit',
                                                     '&:hover': {
-                                                        backgroundColor: '#f5f5f5',
+                                                        backgroundColor:
+                                                            selectedPositionId === pos._id ? '#a4bcd3ff' : '#f5f5f5',
                                                     },
                                                 }}
                                             >
-                                                <ListItemText primary={pos.Name} sx={{ fontFamily: '"Permanent Marker", cursive' }} />
+                                                <ListItemText
+                                                    primary={pos.Name}
+                                                    sx={{ fontFamily: '"Permanent Marker", cursive' }}
+                                                />
                                             </ListItem>
                                         ))
                                     )}
@@ -284,34 +281,32 @@ export const DevList = () => {
                                 </Typography>
                                 <Box sx={{ maxHeight: 500, overflowY: 'auto', padding: 1 }}>
                                     {devList.length === 0 ? (
-                                        <Typography sx={{ fontFamily: '"Permanent Marker", cursive' }}>No developers found.</Typography>
+                                        <Typography sx={{ fontFamily: '"Permanent Marker", cursive' }}>
+Please choose a position to see our available developers.                                        </Typography>
                                     ) : (
                                         devList.map((dev) => (
                                             <Card key={dev._id} sx={{ marginBottom: 2 }}>
                                                 <CardContent>
                                                     <Grid container alignItems="center">
-                                                        {/* Left: Developer Info */}
                                                         <Grid item xs={10}>
-                                                            <Typography variant="h6" sx={{ color: '#ff8c00', fontFamily: '"Permanent Marker", cursive' }}>
-                                                                <Link
-                                                                    to={`/devs/${dev._id}`}
-                                                                    style={{ color: '#ff8c00', textDecoration: 'none', fontFamily: '"Permanent Marker", cursive' }}
-                                                                >
-                                                                    {dev.firstName} {dev.lastName}
-                                                                </Link>
+                                                            <Typography
+                                                                variant="h6"
+                                                                sx={{ color: '#ff8c00', fontFamily: '"Permanent Marker", cursive' }}
+                                                            >
+                                                                {dev.firstName} {dev.lastName}
                                                             </Typography>
-
-                                                            <Typography variant="body1" sx={{ fontWeight: 'bold', marginY: 1, fontFamily: '"Permanent Marker", cursive' }}>
+                                                            <Typography
+                                                                variant="body1"
+                                                                sx={{ fontWeight: 'bold', marginY: 1, fontFamily: '"Permanent Marker", cursive' }}
+                                                            >
                                                                 {Array.isArray(dev.languages) && dev.languages.length > 0
                                                                     ? dev.languages.join(' • ')
                                                                     : 'No languages'}
                                                             </Typography>
-
                                                             <Typography variant="body2" sx={{ fontFamily: '"Permanent Marker", cursive' }}>
                                                                 {dev.bio || 'No bio available'}
                                                             </Typography>
                                                         </Grid>
-                                                       
                                                     </Grid>
                                                 </CardContent>
                                             </Card>
@@ -323,8 +318,6 @@ export const DevList = () => {
                     </Grid>
                 </Container>
             </SketchContainer>
-
-         
         </ThemeProvider>
     );
 };

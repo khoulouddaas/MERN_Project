@@ -5,4 +5,5 @@ module.exports = (app) => {
     app.post('/api/org/register', OrgController.register);
     app.post('/api/org/login', OrgController.login);
     app.post('/api/org/logout', OrgController.logout);
+    
 };

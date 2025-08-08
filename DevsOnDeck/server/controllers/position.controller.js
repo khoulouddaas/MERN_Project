@@ -74,15 +74,28 @@ module.exports.FindDevsForPosition = async (req, res) => {
     res.status(200).json(matchingDevs);
 
     // Then send emails asynchronously, without blocking response
-    matchingDevs.forEach(dev => {
-      if (dev.email) {
-        sendEmail(
-          dev.email,
-          "New Job Position Available",
-          `Hi ${dev.firstName},\n\nWe found a new job position "${position.Name}" that matches your skills.\nCongrats for joining us!`
-        ).catch(err => console.error(`Failed to send email to ${dev.email}:`, err));
-      }
-    });
+matchingDevs.forEach(dev => {
+  if (dev.email) {
+    sendEmail(
+      dev.email,
+      "New Job Position Available",
+      `Hi ${dev.firstName},
+
+We’re excited to let you know that we’ve found a new job position — "${position.Name}" — that matches your skills and experience. 
+We believe you could be a great fit for this opportunity and look forward to seeing your contribution.
+
+If selected, you’ll be expected to join the team starting at 9:00 AM on the assigned workdays, collaborating with other talented developers 
+to deliver high-quality results. This position is a great chance to grow your expertise, work on exciting projects, 
+and make an impact.
+
+Congrats for being part of our network! We’ll be in touch with more details soon.
+
+Best regards,  
+The Recruitment Team`
+    ).catch(err => console.error(`Failed to send email to ${dev.email}:`, err));
+  }
+});
+
 
   } catch (error) {
     console.error('Error finding developers for position:', error);

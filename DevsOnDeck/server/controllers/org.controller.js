@@ -75,6 +75,7 @@ module.exports = {
         });
     },
 
+    
     getLoggedInOrganization: (req, res) => {
         console.log("Getting logged in organization....");
         Organization.findOne({ _id: req.jwtpayload.id })

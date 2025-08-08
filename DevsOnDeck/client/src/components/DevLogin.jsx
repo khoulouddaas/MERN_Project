@@ -139,12 +139,13 @@ export const DevLogin = () => {
                 setErrorMessage(err.response?.data?.message || "Login failed");
             });
     };
-
-   const handleGoogleLogin = async (credentialResponse) => {
+const handleGoogleLogin = async (credentialResponse) => {
   try {
-    await axios.post("http://localhost:8000/api/devs/google-sign", { token },
-
-      { withCredentials: true }               // ← send/receive cookies
+    const token = credentialResponse.credential;  // extract the JWT token here
+    await axios.post(
+      "http://localhost:8000/api/devs/google-sign",
+      { token },
+      { withCredentials: true }
     );
     login('dev');
     nav("/devs/profile");
@@ -152,6 +153,7 @@ export const DevLogin = () => {
     setErrorMessage("Google Login Failed");
   }
 };
+
 
 
     return (
