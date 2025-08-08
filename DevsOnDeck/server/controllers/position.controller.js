@@ -42,33 +42,48 @@ module.exports.FindOneSinglePosition = (req, res) => {
     });
 };
 
+const sendEmail = require("../utils/sendEmail");
 
 module.exports.FindDevsForPosition = async (req, res) => {
   try {
     const position = await PositionSchema.findById(req.params.positionId);
-    if (!position) return res.status(404).json({ message: 'Position not found' });
+    if (!position) {
+      return res.status(404).json({ message: 'Position not found' });
+    }
 
     const requiredSkills = position.Skills || [];
 
-    // Load all skills and populate devId to get developer info
     const allSkills = await Skill.find().populate('devId');
 
-    // Filter developers who have at least 2 matching skills
     const matchingDevs = allSkills
       .filter(skillDoc => {
         const devSkills = skillDoc.languages || [];
         const commonSkills = devSkills.filter(skill => requiredSkills.includes(skill));
-        return commonSkills.length >= 2 && skillDoc.devId; // Ensure developer exists
+        return commonSkills.length >= 2 && skillDoc.devId;
       })
       .map(skillDoc => ({
         _id: skillDoc.devId._id,
         firstName: skillDoc.devId.firstName,
         lastName: skillDoc.devId.lastName,
+        email: skillDoc.devId.email,
         bio: skillDoc.bio,
         languages: skillDoc.languages,
       }));
 
+    // Respond immediately
     res.status(200).json(matchingDevs);
+
+    // Then send emails asynchronously, without blocking response
+    matchingDevs.forEach(dev => {
+      if (dev.email) {
+        sendEmail(
+          dev.email,
+          "New Job Position Available",
+          `Hi ${dev.firstName},\n\nWe found a new job position "${position.Name}" that matches your skills.\nCongrats for joining us!`
+        ).catch(err => console.error(`Failed to send email to ${dev.email}:`, err));
+      }
+    });
+
   } catch (error) {
     console.error('Error finding developers for position:', error);
     res.status(500).json({ message: 'Internal Server Error' });
